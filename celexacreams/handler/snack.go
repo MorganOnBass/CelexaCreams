@@ -6,7 +6,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-// Snack responds to "meow"
+// Snack responds to "snack"
 type Snack struct{}
 
 // Handle shows snack

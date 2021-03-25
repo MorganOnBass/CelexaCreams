@@ -25,6 +25,7 @@ var (
 	celexacreamsHandlers = map[string]celexacreams.Handler{
 		"snack": &handler.Snack{},
 		"meow":  &handler.Meow{},
+		"gif":   &handler.Gif{},
 	}
 )
 
