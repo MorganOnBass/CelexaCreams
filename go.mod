@@ -1,4 +1,4 @@
-module github.com/morganonbass/celexacreams/celexacreams
+module github.com/morganonbass/celexacreams
 
 go 1.16
 

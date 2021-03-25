@@ -23,9 +23,8 @@ var (
 	})
 
 	celexacreamsHandlers = map[string]celexacreams.Handler{
-		"snack":  &handler.Snack{},
-		"meow":   &handler.Meow{},
-		"server": &handler.Server{},
+		"snack": &handler.Snack{},
+		"meow":  &handler.Meow{},
 	}
 )
 
@@ -87,7 +86,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	if strings.HasPrefix(m.ContentWithMentionsReplaced(), "@celexacreams") {
+	if strings.HasPrefix(m.ContentWithMentionsReplaced(), ".") {
 		rootHandler := &handler.Root{
 			Handlers: celexacreamsHandlers,
 		}

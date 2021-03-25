@@ -38,16 +38,16 @@ func (c *Root) Handle(m *discordgo.MessageCreate) (string, error) {
 	}
 	log.Info(command)
 
-	handler, ok := c.Handlers[command[1]]
+	handler, ok := c.Handlers[command[0]]
 	if !ok {
-		return "", &celexacreams.CommandNotFoundError{command[1]}
+		return "", &celexacreams.CommandNotFoundError{command[0]}
 	}
 
 	response, err := handler.Handle(m)
 	if err != nil {
-		celexaCreamsCommandHandledError.WithLabelValues(command[1]).Inc()
+		celexaCreamsCommandHandledError.WithLabelValues(command[0]).Inc()
 	}
-	celexaCreamsCommandHandledSuccess.WithLabelValues(command[1]).Inc()
+	celexaCreamsCommandHandledSuccess.WithLabelValues(command[0]).Inc()
 
 	return response, err
 }

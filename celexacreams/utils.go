@@ -31,20 +31,21 @@ func (e *CommandNotFoundError) Error() string {
 
 func ExtractCommand(s string) ([]string, error) {
 	splitInput := strings.Split(s, " ")
+	splitInput[0] = strings.Trim(splitInput[0], ".")
 
 	for i, s := range splitInput {
 		splitInput[i] = strings.TrimSpace(s)
 	}
 
-	if splitInput[0] != "@CelexaCreams" {
-		return []string{}, &InvalidCommandFormatError{
-			"first segment must be '@CelexaCreams'",
-		}
-	}
+	// if splitInput[0] != "@CelexaCreams" {
+	// 	return []string{}, &InvalidCommandFormatError{
+	// 		"first segment must be '@CelexaCreams'",
+	// 	}
+	// }
 
-	if len(splitInput) < 2 {
+	if len(splitInput) < 1 {
 		return []string{}, &InvalidCommandFormatError{
-			"command must be at least 2 segments, @CelexaCreams <command>",
+			"There's no command here?",
 		}
 	}
 
