@@ -11,7 +11,7 @@ type Snack struct{}
 
 // Handle shows snack
 func (h *Snack) Handle(m *discordgo.MessageCreate) (string, error) {
-	url, err := celexacreams.GetGIF("cat eating")
+	url, err := celexacreams.GetRandomGIF("cat eating")
 	if err != nil {
 		return "", &celexacreams.CelexaError{
 			"GIF error: " + err.Error(),

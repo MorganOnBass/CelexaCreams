@@ -11,11 +11,12 @@ shopt -s expand_aliases
 }
 
 TS="$(date +%s)"
-TAG="celexacreams:$TS"
+DOCKER_HUB_USER="morganonbass"
+TAG="$DOCKER_HUB_USER/celexacreams:$TS"
 SCRIPT_PATH=$(readlink -f $0)
 PROJECT_ROOT=$(dirname $SCRIPT_PATH)/..
 
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOPATH=$PROJECT_ROOT/go $(which go) build -o $PROJECT_ROOT/bin/celexacreams $PROJECT_ROOT
 docker build -t $TAG $PROJECT_ROOT
-docker tag $TAG celexacreams:latest
+docker tag $TAG $DOCKER_HUB_USER/celexacreams:latest
 echo "$TAG"

@@ -2,6 +2,7 @@ package celexacreams
 
 import (
 	"fmt"
+	"net/url"
 	"strings"
 )
 
@@ -37,12 +38,6 @@ func ExtractCommand(s string) ([]string, error) {
 		splitInput[i] = strings.TrimSpace(s)
 	}
 
-	// if splitInput[0] != "@CelexaCreams" {
-	// 	return []string{}, &InvalidCommandFormatError{
-	// 		"first segment must be '@CelexaCreams'",
-	// 	}
-	// }
-
 	if len(splitInput) < 1 {
 		return []string{}, &InvalidCommandFormatError{
 			"There's no command here?",
@@ -50,4 +45,9 @@ func ExtractCommand(s string) ([]string, error) {
 	}
 
 	return splitInput, nil
+}
+
+func IsURL(str string) bool {
+	u, err := url.Parse(str)
+	return err == nil && u.Scheme != "" && u.Host != ""
 }
