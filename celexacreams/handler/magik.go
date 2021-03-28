@@ -1,6 +1,9 @@
 package handler
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/morganonbass/celexacreams/celexacreams"
 	"gopkg.in/gographics/imagick.v3/imagick"
 
@@ -12,6 +15,22 @@ type Magik struct{}
 
 // Handle meows back
 func (h *Magik) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (string, []byte, error) {
+	ref := discordgo.MessageReference{
+		MessageID: m.ID,
+		ChannelID: c.ID,
+		GuildID:   m.GuildID,
+	}
+
+	r := discordgo.MessageSend{
+		Content:   "Processing...",
+		Reference: &ref,
+	}
+	msg, err := s.ChannelMessageSendComplex(c.ID, &r)
+	if err != nil {
+		return "", make([]byte, 0), err
+	}
+	defer s.ChannelMessageDelete(c.ID, msg.ID)
+	sTime := time.Now()
 	URL, err := celexacreams.FindNearestImageURL(m, c, s)
 	if err != nil {
 		return "", make([]byte, 0), err
@@ -43,5 +62,7 @@ func (h *Magik) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *disc
 		return "", make([]byte, 0), err
 	}
 	output := mw.GetImageBlob()
-	return "", output, nil
+	fTime := time.Now()
+	eTime := fTime.Sub(sTime)
+	return "Image processed in " + fmt.Sprint(eTime), output, nil
 }
