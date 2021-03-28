@@ -15,7 +15,7 @@ import (
 // Magik responds to "magik"
 type Magik struct{}
 
-// Handle meows back
+// Handle magiks an image
 func (h *Magik) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (string, []byte, error) {
 	args, _ := celexacreams.ExtractCommand(m.Content)
 	var sauce float64
@@ -35,6 +35,9 @@ func (h *Magik) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *disc
 	if sauce < 0 {
 		// this segfaults imagemagick, lol
 		return "Negative numbers make imagemagick segfault. Are you trying to kill me?", make([]byte, 0), nil
+	}
+	if sauce > 50000 {
+		return "Nothing requires that much magik sauce.", make([]byte, 0), nil
 	}
 	ref := discordgo.MessageReference{
 		MessageID: m.ID,

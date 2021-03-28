@@ -29,6 +29,10 @@ var (
 		"gif":         &handler.Gif{},
 		"gifroulette": &handler.GifRoulette{},
 		"magik":       &handler.Magik{},
+		"haah":        &handler.Haah{},
+		"hooh":        &handler.Hooh{},
+		"ahha":        &handler.Ahha{},
+		"ohho":        &handler.Ohho{},
 	}
 )
 

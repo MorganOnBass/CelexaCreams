@@ -2,6 +2,8 @@ package celexacreams
 
 import (
 	"fmt"
+	"image"
+	"image/color"
 	"io"
 	"net/http"
 	"strings"
@@ -77,4 +79,24 @@ func DownloadImage(url string) ([]byte, error) {
 		return []byte{}, err
 	}
 	return image, nil
+}
+
+type Pixel struct {
+	Point image.Point
+	Color color.Color
+}
+
+// Decode image.Image's pixel data into []*Pixel
+func DecodePixelsFromImage(img image.Image, offsetX, offsetY int) []*Pixel {
+	pixels := []*Pixel{}
+	for y := 0; y <= img.Bounds().Max.Y; y++ {
+		for x := 0; x <= img.Bounds().Max.X; x++ {
+			p := &Pixel{
+				Point: image.Point{x + offsetX, y + offsetY},
+				Color: img.At(x, y),
+			}
+			pixels = append(pixels, p)
+		}
+	}
+	return pixels
 }
