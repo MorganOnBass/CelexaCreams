@@ -32,6 +32,10 @@ func (h *Magik) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *disc
 		// this gets rounded to a uint for mw.LiquidRescaleImage() so 1.0 is no weaker than default
 		sauce = float64(0.9)
 	}
+	if sauce < 0 {
+		// this segfaults imagemagick, lol
+		return "Negative numbers make imagemagick segfault. Are you trying to kill me?", make([]byte, 0), nil
+	}
 	ref := discordgo.MessageReference{
 		MessageID: m.ID,
 		ChannelID: c.ID,
