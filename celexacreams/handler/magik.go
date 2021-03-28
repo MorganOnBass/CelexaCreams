@@ -2,6 +2,8 @@ package handler
 
 import (
 	"fmt"
+	"math"
+	"strconv"
 	"time"
 
 	"github.com/morganonbass/celexacreams/celexacreams"
@@ -15,6 +17,21 @@ type Magik struct{}
 
 // Handle meows back
 func (h *Magik) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (string, []byte, error) {
+	args, _ := celexacreams.ExtractCommand(m.Content)
+	var sauce float64
+	if len(args) > 1 {
+		arg, err := strconv.ParseFloat(args[1], 64)
+		if err != nil {
+			sauce = float64(2.0) // probably got '.magik <URL>'
+		}
+		sauce = arg
+	} else {
+		sauce = float64(2.0)
+	}
+	if sauce == float64(1.0) {
+		// this gets rounded to a uint for mw.LiquidRescaleImage() so 1.0 is no weaker than default
+		sauce = float64(0.9)
+	}
 	ref := discordgo.MessageReference{
 		MessageID: m.ID,
 		ChannelID: c.ID,
@@ -49,11 +66,11 @@ func (h *Magik) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *disc
 	width := mw.GetImageWidth()
 	height := mw.GetImageHeight()
 
-	err = mw.LiquidRescaleImage(uint(float64(width)*0.5), uint(float64(height)*0.5), 1, 0)
+	err = mw.LiquidRescaleImage(uint(float64(width)*0.5), uint(float64(height)*0.5), math.Round(sauce*0.5), 0)
 	if err != nil {
 		return "", make([]byte, 0), err
 	}
-	err = mw.LiquidRescaleImage(uint(float64(width)*0.75), uint(float64(height)*0.75), 2, 0)
+	err = mw.LiquidRescaleImage(uint(float64(width)*0.75), uint(float64(height)*0.75), math.Round(sauce), 0)
 	if err != nil {
 		return "", make([]byte, 0), err
 	}
