@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"bytes"
+
 	"github.com/bwmarrin/discordgo"
 	"github.com/morganonbass/celexacreams/celexacreams"
 	"github.com/prometheus/client_golang/prometheus"
@@ -31,23 +33,42 @@ type Root struct {
 }
 
 // Handle determines the command handler
-func (c *Root) Handle(m *discordgo.MessageCreate) (string, error) {
+func (h *Root) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (*discordgo.MessageSend, error) {
 	command, err := celexacreams.ExtractCommand(m.ContentWithMentionsReplaced())
 	if err != nil {
-		return "", err
+		return &discordgo.MessageSend{}, err
 	}
 	log.Info(command)
 
-	handler, ok := c.Handlers[command[0]]
+	handler, ok := h.Handlers[command[0]]
 	if !ok {
-		return "", &celexacreams.CommandNotFoundError{command[0]}
+		return &discordgo.MessageSend{}, &celexacreams.CommandNotFoundError{command[0]}
 	}
 
-	response, err := handler.Handle(m)
+	response, pic, err := handler.Handle(m, c, s)
 	if err != nil {
 		celexaCreamsCommandHandledError.WithLabelValues(command[0]).Inc()
 	}
 	celexaCreamsCommandHandledSuccess.WithLabelValues(command[0]).Inc()
 
-	return response, err
+	ref := discordgo.MessageReference{
+		MessageID: m.ID,
+		ChannelID: c.ID,
+		GuildID:   m.GuildID,
+	}
+
+	r := discordgo.MessageSend{
+		Content:   response,
+		Reference: &ref,
+	}
+
+	if len(pic) > 0 {
+		file := discordgo.File{
+			Reader: bytes.NewReader(pic),
+			Name:   "botspam.png",
+		}
+		r.Files = []*discordgo.File{&file}
+	}
+
+	return &r, err
 }

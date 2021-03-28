@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+var Prefix string
+
 type CelexaError struct {
 	Message string
 }
@@ -32,7 +34,7 @@ func (e *CommandNotFoundError) Error() string {
 
 func ExtractCommand(s string) ([]string, error) {
 	splitInput := strings.Split(s, " ")
-	splitInput[0] = strings.Trim(splitInput[0], ".")
+	splitInput[0] = strings.Trim(splitInput[0], Prefix)
 
 	for i, s := range splitInput {
 		splitInput[i] = strings.TrimSpace(s)

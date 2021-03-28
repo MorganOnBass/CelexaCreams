@@ -2,7 +2,7 @@ package handler
 
 import (
 	"github.com/morganonbass/celexacreams/celexacreams"
-	log "github.com/sirupsen/logrus"
+	"gopkg.in/gographics/imagick.v3/imagick"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -18,17 +18,39 @@ import (
 type Magik struct{}
 
 // Handle meows back
-func (h *Magik) Handle(m *discordgo.MessageCreate) (string, error) {
-	image, err := celexacreams.FindNearestImage(m)
+func (h *Magik) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (string, []byte, error) {
+	URL, err := celexacreams.FindNearestImageURL(m, c, s)
 	if err != nil {
-		return "", err
+		return "", make([]byte, 0), err
 	}
-	log.WithFields(log.Fields{
-		"m.ID":          m.ID,
-		"m.Attachments": m.Attachments,
-		"m.Content":     m.ContentWithMentionsReplaced(),
-		"image":         image,
-	}).Info("Debug noise!")
+	image, err := celexacreams.DownloadImage(URL)
+	if err != nil {
+		return "", make([]byte, 0), err
+	}
 
-	return m.Author.Mention() + " Not implemented yet, but probably logging to console for Morgan to debug", nil
+	mw := imagick.NewMagickWand()
+	defer mw.Destroy()
+	err = mw.ReadImageBlob(image)
+	if err != nil {
+		return "", make([]byte, 0), err
+	}
+	width := mw.GetImageWidth()
+	height := mw.GetImageHeight()
+
+	err = mw.LiquidRescaleImage(uint(float64(width)*0.5), uint(float64(height)*0.5), 1, 0)
+	if err != nil {
+		return "", make([]byte, 0), err
+	}
+	err = mw.LiquidRescaleImage(uint(float64(width)*0.75), uint(float64(height)*0.75), 2, 0)
+	if err != nil {
+		return "", make([]byte, 0), err
+	}
+	err = mw.SetImageFormat("PNG")
+	if err != nil {
+		return "", make([]byte, 0), err
+	}
+	output := mw.GetImageBlob()
+	return "", output, nil
+
+	//return "Not implemented yet, but probably logging to console for Morgan to debug", make([]byte, 0), nil
 }

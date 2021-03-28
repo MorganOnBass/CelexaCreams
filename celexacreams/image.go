@@ -9,7 +9,30 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func FindNearestImage(m *discordgo.MessageCreate) (string, error) {
+func FindNearestImageURL(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (string, error) {
+	var url string
+	var err error
+	url, err = GetImageURLFromMessage(m.Message)
+	if err != nil {
+		history, err := s.ChannelMessages(c.ID, 100, m.ID, "", "")
+		if err != nil {
+			return "", fmt.Errorf("error retrieving message history")
+		}
+		for _, msg := range history {
+			url, err = GetImageURLFromMessage(msg)
+			if err != nil {
+				continue
+			}
+			return url, nil
+		}
+	}
+	if err != nil {
+		return "", err
+	}
+	return url, nil
+}
+
+func GetImageURLFromMessage(m *discordgo.Message) (string, error) {
 	if len(m.Attachments) > 0 {
 		url := m.Attachments[0].URL
 		return url, nil
@@ -19,12 +42,10 @@ func FindNearestImage(m *discordgo.MessageCreate) (string, error) {
 		if IsURL(input) {
 			resp, err := http.Head(input)
 			if err != nil {
-				panic(err)
+				continue
 			}
 			if resp.StatusCode != http.StatusOK {
-				return "", fmt.Errorf(
-					"HTTP status %d", resp.StatusCode,
-				)
+				continue
 			}
 			if strings.HasPrefix(resp.Header.Get("content-type"), "image") {
 				return input, nil
@@ -33,7 +54,7 @@ func FindNearestImage(m *discordgo.MessageCreate) (string, error) {
 		}
 	}
 	return "", fmt.Errorf(
-		"No Image Found.",
+		"no Image Found",
 	)
 }
 

@@ -14,6 +14,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
+	"gopkg.in/gographics/imagick.v3/imagick"
 )
 
 var (
@@ -31,6 +32,8 @@ var (
 	}
 )
 
+var Prefix string
+
 func serveMetrics() {
 	http.Handle("/metrics", promhttp.Handler())
 	http.ListenAndServe(":2112", nil)
@@ -38,6 +41,13 @@ func serveMetrics() {
 
 func main() {
 	go serveMetrics()
+
+	p, ok := os.LookupEnv("PREFIX")
+	if !ok {
+		log.Fatal("PREFIX is not set")
+	}
+	Prefix = p
+	celexacreams.Prefix = Prefix
 
 	token, ok := os.LookupEnv("DISCORD_TOKEN")
 	if !ok {
@@ -58,6 +68,8 @@ func main() {
 			"error": err.Error(),
 		}).Fatal("failed to open Discord session")
 	}
+	imagick.Initialize()
+	defer imagick.Terminate()
 
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
@@ -89,20 +101,25 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	if strings.HasPrefix(m.ContentWithMentionsReplaced(), ".") {
+	if strings.HasPrefix(m.ContentWithMentionsReplaced(), Prefix) {
 		rootHandler := &handler.Root{
 			Handlers: celexacreamsHandlers,
 		}
 
-		response, err := rootHandler.Handle(m)
+		response, err := rootHandler.Handle(m, c, s)
 		if err != nil {
 			log.WithFields(log.Fields{
 				"error": err.Error(),
 			}).Error("failed to handle command: " + err.Error())
-			response = err.Error()
+			response.Content = err.Error()
+			response.Reference = &discordgo.MessageReference{
+				ChannelID: c.ID,
+				MessageID: m.ID,
+				GuildID:   m.GuildID,
+			}
 		}
 
-		_, err = s.ChannelMessageSend(c.ID, response)
+		_, err = s.ChannelMessageSendComplex(c.ID, response)
 		if err != nil {
 			log.WithFields(log.Fields{
 				"error": err.Error(),

@@ -13,4 +13,4 @@ fi
 
 
 docker stop celexacreams && docker rm celexacreams
-docker run -d --env DISCORD_TOKEN=$DISCORD_TOKEN --env GIPHY_API_KEY=$GIPHY_API_KEY --name celexacreams morganonbass/celexacreams:latest
+docker run -d --env DISCORD_TOKEN=$DISCORD_TOKEN --env GIPHY_API_KEY=$GIPHY_API_KEY --env PREFIX=$PREFIX --name celexacreams morganonbass/celexacreams:latest

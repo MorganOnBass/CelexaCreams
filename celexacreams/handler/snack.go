@@ -10,12 +10,12 @@ import (
 type Snack struct{}
 
 // Handle shows snack
-func (h *Snack) Handle(m *discordgo.MessageCreate) (string, error) {
+func (h *Snack) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (string, []byte, error) {
 	url, err := celexacreams.GetRandomGIF("cat eating")
 	if err != nil {
-		return "", &celexacreams.CelexaError{
+		return "", make([]byte, 0), &celexacreams.CelexaError{
 			"GIF error: " + err.Error(),
 		}
 	}
-	return m.Author.Mention() + " " + url, nil
+	return url, make([]byte, 0), nil
 }
