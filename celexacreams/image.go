@@ -47,6 +47,9 @@ func GetImageURLFromMessage(m *discordgo.Message) (string, error) {
 			if resp.StatusCode != http.StatusOK {
 				continue
 			}
+			if resp.Header.Get("content-type") == "image/gif" {
+				continue
+			}
 			if strings.HasPrefix(resp.Header.Get("content-type"), "image") {
 				return input, nil
 			}
