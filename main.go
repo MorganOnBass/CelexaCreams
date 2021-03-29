@@ -24,15 +24,15 @@ var (
 	})
 
 	celexacreamsHandlers = map[string]celexacreams.Handler{
-		"snack":       &handler.Snack{},
-		"meow":        &handler.Meow{},
-		"gif":         &handler.Gif{},
-		"gifroulette": &handler.GifRoulette{},
-		"magik":       &handler.Magik{},
-		"haah":        &handler.Haah{},
-		"hooh":        &handler.Hooh{},
-		"ahha":        &handler.Ahha{},
-		"ohho":        &handler.Ohho{},
+		"snack":       &handler.Snack{},       // Feeds the bot
+		"meow":        &handler.Meow{},        // A prototype
+		"gif":         &handler.Gif{},         // Return the first giphy result for a search string
+		"gifroulette": &handler.GifRoulette{}, // return a random giphy result for a search string
+		"magik":       &handler.Magik{},       // magik an image, optional numeric argument specifies how much magik
+		"haah":        &handler.Haah{},        // Crop an image left half and mirror about Y axis
+		"hooh":        &handler.Hooh{},        // Crop an image top half and mirror about X axis
+		"ahha":        &handler.Ahha{},        // Crop an image right half and mirror about Y axis
+		"ohho":        &handler.Ohho{},        // Crop an image bottom half and mirror about X axis
 	}
 )
 
@@ -106,6 +106,10 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	if strings.HasPrefix(m.ContentWithMentionsReplaced(), Prefix) {
+		if strings.HasPrefix(m.ContentWithMentionsReplaced(), Prefix+Prefix) {
+			// now we don't invoke the bot when starting a message with ellipses
+			return
+		}
 		rootHandler := &handler.Root{
 			Handlers: celexacreamsHandlers,
 		}
