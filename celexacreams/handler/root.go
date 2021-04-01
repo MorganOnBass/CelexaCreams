@@ -45,7 +45,7 @@ func (h *Root) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *disco
 		return &discordgo.MessageSend{}, &celexacreams.CommandNotFoundError{command[0]}
 	}
 
-	response, pic, err := handler.Handle(m, c, s)
+	response, filename, pic, err := handler.Handle(m, c, s)
 	if err != nil {
 		celexaCreamsCommandHandledError.WithLabelValues(command[0]).Inc()
 	}
@@ -65,7 +65,7 @@ func (h *Root) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *disco
 	if len(pic) > 0 {
 		file := discordgo.File{
 			Reader: bytes.NewReader(pic),
-			Name:   "botspam.png",
+			Name:   filename,
 		}
 		r.Files = []*discordgo.File{&file}
 	}

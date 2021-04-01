@@ -32,6 +32,22 @@ func (e *CommandNotFoundError) Error() string {
 	return fmt.Sprintf("command not found: %s", e.Message)
 }
 
+type NotAnImageError struct {
+	Message string
+}
+
+func (e *NotAnImageError) Error() string {
+	return fmt.Sprintf("not an image: %s", e.Message)
+}
+
+type ImageNotFoundError struct {
+	Message string
+}
+
+func (e *ImageNotFoundError) Error() string {
+	return fmt.Sprintf("Image not found in message: %s", e.Message)
+}
+
 func ExtractCommand(s string) ([]string, error) {
 	splitInput := strings.Split(s, " ")
 	splitInput[0] = strings.Trim(splitInput[0], Prefix)

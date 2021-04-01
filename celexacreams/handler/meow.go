@@ -8,6 +8,11 @@ import (
 type Meow struct{}
 
 // Handle meows back
-func (h *Meow) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (string, []byte, error) {
-	return "_meeeeow_", make([]byte, 0), nil
+func (h *Meow) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (
+	string,
+	string,
+	[]byte,
+	error,
+) {
+	return "_meeeeow_", "", make([]byte, 0), nil
 }

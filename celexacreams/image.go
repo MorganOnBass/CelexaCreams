@@ -34,33 +34,43 @@ func FindNearestImageURL(m *discordgo.MessageCreate, c *discordgo.Channel, s *di
 	return url, nil
 }
 
+func IsImage(url string) (bool, error) {
+	resp, err := http.Head(url)
+	if err != nil {
+		return false, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return false, fmt.Errorf("HTTP Status %d", resp.StatusCode)
+	}
+	if resp.Header.Get("content-type") == "image/gif" {
+		return false, nil
+	}
+	if strings.HasPrefix(resp.Header.Get("content-type"), "image") {
+		return true, nil
+	}
+	return false, nil
+}
+
 func GetImageURLFromMessage(m *discordgo.Message) (string, error) {
 	if len(m.Attachments) > 0 {
 		url := m.Attachments[0].URL
+		isImage, err := IsImage(url)
+		if err != nil || !isImage {
+			return "", &NotAnImageError{url}
+		}
 		return url, nil
 	}
 	splitInput := strings.Split(m.ContentWithMentionsReplaced(), " ")
-	for _, input := range splitInput {
-		if IsURL(input) {
-			resp, err := http.Head(input)
-			if err != nil {
-				continue
+	for _, url := range splitInput {
+		if IsURL(url) {
+			isImage, err := IsImage(url)
+			if err != nil || !isImage {
+				return "", &NotAnImageError{url}
 			}
-			if resp.StatusCode != http.StatusOK {
-				continue
-			}
-			if resp.Header.Get("content-type") == "image/gif" {
-				continue
-			}
-			if strings.HasPrefix(resp.Header.Get("content-type"), "image") {
-				return input, nil
-			}
-
+			return url, nil
 		}
 	}
-	return "", fmt.Errorf(
-		"no Image Found",
-	)
+	return "", &ImageNotFoundError{m.ID}
 }
 
 func DownloadImage(url string) ([]byte, error) {

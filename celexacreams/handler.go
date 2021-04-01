@@ -6,5 +6,5 @@ import (
 
 // Handler handles CelexaCreams commands
 type Handler interface {
-	Handle(*discordgo.MessageCreate, *discordgo.Channel, *discordgo.Session) (string, []byte, error)
+	Handle(*discordgo.MessageCreate, *discordgo.Channel, *discordgo.Session) (string, string, []byte, error)
 }
