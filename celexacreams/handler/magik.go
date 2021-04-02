@@ -13,7 +13,19 @@ import (
 )
 
 // Magik responds to "magik"
-type Magik struct{}
+type Magik struct{
+	R, D bool
+}
+
+// Should I reply to the invoking message?
+func (h *Magik) Reply() bool {
+	return h.R
+}
+
+// Should I delete the invoking message?
+func (h *Magik) DeleteInvocation() bool {
+	return h.D
+}
 
 // Handle magiks an image
 func (h *Magik) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (string, string, []byte, error) {

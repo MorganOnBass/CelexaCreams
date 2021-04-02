@@ -48,6 +48,14 @@ func (e *ImageNotFoundError) Error() string {
 	return fmt.Sprintf("Image not found in message: %s", e.Message)
 }
 
+type MissingArgsError struct {
+	Message string
+}
+
+func (e *MissingArgsError) Error() string {
+	return fmt.Sprintf("%s command expects an argument", e.Message)
+}
+
 func ExtractCommand(s string) ([]string, error) {
 	splitInput := strings.Split(s, " ")
 	splitInput[0] = strings.Trim(splitInput[0], Prefix)

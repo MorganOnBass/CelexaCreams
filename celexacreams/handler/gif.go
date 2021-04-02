@@ -9,7 +9,19 @@ import (
 )
 
 // Gif responds to "Gif"
-type Gif struct{}
+type Gif struct{
+	R, D bool
+}
+
+// Should I reply to the invoking message?
+func (h *Gif) Reply() bool {
+	return h.R
+}
+
+// Should I delete the invoking message?
+func (h *Gif) DeleteInvocation() bool {
+	return h.D
+}
 
 // Handle shows the first gif returned by the supplied search string
 func (h *Gif) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (string, string, []byte, error) {

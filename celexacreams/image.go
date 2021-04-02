@@ -102,7 +102,7 @@ func DecodePixelsFromImage(img image.Image, offsetX, offsetY int) []*Pixel {
 	for y := 0; y <= img.Bounds().Max.Y; y++ {
 		for x := 0; x <= img.Bounds().Max.X; x++ {
 			p := &Pixel{
-				Point: image.Point{x + offsetX, y + offsetY},
+				Point: image.Point{X: x + offsetX, Y: y + offsetY},
 				Color: img.At(x, y),
 			}
 			pixels = append(pixels, p)

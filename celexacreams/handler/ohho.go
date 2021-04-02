@@ -14,7 +14,19 @@ import (
 )
 
 // Ohho responds to "ohho"
-type Ohho struct{}
+type Ohho struct{
+	R, D bool
+}
+
+// Should I reply to the invoking message?
+func (h *Ohho) Reply() bool {
+	return h.R
+}
+
+// Should I delete the invoking message?
+func (h *Ohho) DeleteInvocation() bool {
+	return h.D
+}
 
 // Handle returns an image mirrored about the Y axis
 func (h *Ohho) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (string, string, []byte, error) {

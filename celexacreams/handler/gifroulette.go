@@ -9,7 +9,19 @@ import (
 )
 
 // GifRoulette responds to "GifRoulette"
-type GifRoulette struct{}
+type GifRoulette struct{
+	R, D bool
+}
+
+// Should I reply to the invoking message?
+func (h *GifRoulette) Reply() bool {
+	return h.R
+}
+
+// Should I delete the invoking message?
+func (h *GifRoulette) DeleteInvocation() bool {
+	return h.D
+}
 
 // Handle shows a random gif returned by the supplied search string
 func (h *GifRoulette) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (string, string, []byte, error) {

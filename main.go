@@ -24,15 +24,19 @@ var (
 	})
 
 	celexacreamsHandlers = map[string]celexacreams.Handler{
-		"snack":       &handler.Snack{},       // Feeds the bot
-		"meow":        &handler.Meow{},        // A prototype
-		"gif":         &handler.Gif{},         // Return the first giphy result for a search string
-		"gifroulette": &handler.GifRoulette{}, // return a random giphy result for a search string
-		"magik":       &handler.Magik{},       // magik an image, optional numeric argument specifies how much magik
-		"haah":        &handler.Haah{},        // Crop an image left half and mirror about Y axis
-		"hooh":        &handler.Hooh{},        // Crop an image top half and mirror about X axis
-		"ahha":        &handler.Ahha{},        // Crop an image right half and mirror about Y axis
-		"ohho":        &handler.Ohho{},        // Crop an image bottom half and mirror about X axis
+		// Handlers are structs, properties R and D control whether bot replies and deletes invocation respectively.
+		// Setting both to true would be an error.
+		"snack":       &handler.Snack{R: true},       // Feeds the bot
+		"meow":        &handler.Meow{R: true},        // A prototype
+		"gif":         &handler.Gif{R: true},         // Return the first giphy result for a search string
+		"gifroulette": &handler.GifRoulette{R: true}, // return a random giphy result for a search string
+		"magik":       &handler.Magik{R: true},       // magik an image, optional numeric argument specifies how much magik
+		"haah":        &handler.Haah{R: true},        // Crop an image left half and mirror about Y axis
+		"hooh":        &handler.Hooh{R: true},        // Crop an image top half and mirror about X axis
+		"ahha":        &handler.Ahha{R: true},        // Crop an image right half and mirror about Y axis
+		"ohho":        &handler.Ohho{R: true},        // Crop an image bottom half and mirror about X axis
+		"aesthetic":   &handler.Aesthetic{D: true},   // Take some text and make it ａ ｅ ｓ ｔ ｈ ｅ ｔ ｉ ｃ
+		"aesthetics":  &handler.Aesthetic{D: true},   // An alias because people keep trying to invoke it like this
 	}
 )
 

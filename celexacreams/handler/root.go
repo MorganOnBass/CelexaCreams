@@ -44,6 +44,9 @@ func (h *Root) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *disco
 	if !ok {
 		return &discordgo.MessageSend{}, &celexacreams.CommandNotFoundError{command[0]}
 	}
+	if handler.DeleteInvocation() {
+		defer s.ChannelMessageDelete(c.ID, m.ID)
+	}
 
 	response, filename, pic, err := handler.Handle(m, c, s)
 	if err != nil {
@@ -59,7 +62,10 @@ func (h *Root) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *disco
 
 	r := discordgo.MessageSend{
 		Content:   response,
-		Reference: &ref,
+	}
+
+	if handler.Reply() {
+		r.Reference = &ref
 	}
 
 	if len(pic) > 0 {
