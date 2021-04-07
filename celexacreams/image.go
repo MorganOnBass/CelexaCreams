@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/scottleedavis/go-exif-remove"
 )
 
 func FindNearestImageURL(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (string, error) {
@@ -88,7 +89,12 @@ func DownloadImage(url string) ([]byte, error) {
 	if err != nil {
 		return []byte{}, err
 	}
-	return image, nil
+	// Strip exif data because hygiene, but also the orientation field can cause rotation on convert
+	noExifBytes, err := exifremove.Remove(image)
+	if err != nil {
+		return []byte{}, err
+	}
+	return noExifBytes, nil
 }
 
 type Pixel struct {
