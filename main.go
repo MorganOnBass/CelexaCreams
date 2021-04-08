@@ -31,6 +31,7 @@ var (
 		"gif":         &handler.Gif{R: true},         // Return the first giphy result for a search string
 		"gifroulette": &handler.GifRoulette{R: true}, // return a random giphy result for a search string
 		"magik":       &handler.Magik{R: true},       // magik an image, optional numeric argument specifies how much magik
+		"deepfry":     &handler.DeepFry{R: true},     // Deep fry an image
 		"haah":        &handler.Haah{R: true},        // Crop an image left half and mirror about Y axis
 		"hooh":        &handler.Hooh{R: true},        // Crop an image top half and mirror about X axis
 		"ahha":        &handler.Ahha{R: true},        // Crop an image right half and mirror about Y axis
