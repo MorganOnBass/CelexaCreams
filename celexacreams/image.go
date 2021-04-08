@@ -15,6 +15,17 @@ import (
 func FindNearestImageURL(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (string, error) {
 	var url string
 	var err error
+	if m.MessageReference != nil {
+		// We seem to have been invoked with a reply/crosspost
+		ref, err := s.ChannelMessage(m.MessageReference.ChannelID, m.MessageReference.MessageID)
+		if err == nil {
+			url, err = GetImageURLFromMessage(ref)
+			if err == nil {
+				return url, nil
+			}
+		}
+		// Something went wrong retrieving an image URL from the message reference, carry on as normal...
+	}
 	url, err = GetImageURLFromMessage(m.Message)
 	if err != nil {
 		history, err := s.ChannelMessages(c.ID, 100, m.ID, "", "")
