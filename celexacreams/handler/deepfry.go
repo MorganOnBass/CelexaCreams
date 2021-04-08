@@ -36,6 +36,23 @@ func (h *DeepFry) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *di
 		return "", "", make([]byte, 0), err
 	}
 
+	ref := discordgo.MessageReference{
+		MessageID: m.ID,
+		ChannelID: c.ID,
+		GuildID:   m.GuildID,
+	}
+
+	r := discordgo.MessageSend{
+		Content:   "Processing...",
+		Reference: &ref,
+	}
+	msg, err := s.ChannelMessageSendComplex(c.ID, &r)
+	if err != nil {
+		return "", "", make([]byte, 0), err
+	}
+	defer s.ChannelMessageDelete(c.ID, msg.ID)
+
+
 	mw := imagick.NewMagickWand()
 	defer mw.Destroy()
 
@@ -55,7 +72,7 @@ func (h *DeepFry) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *di
 	if err != nil {
 		return "", "", make([]byte, 0), err
 	}
-	args := []float64{7.379,-10.860,1.870,2.611,-0.000}
+	args := []float64{7.379,22.860,1.870,2.611,-0.000}
 	err = mw.FunctionImage(imagick.FUNCTION_POLYNOMIAL, args)
 	if err != nil {
 		return "", "", make([]byte, 0), err
