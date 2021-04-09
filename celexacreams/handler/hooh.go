@@ -47,6 +47,10 @@ func (h *Hooh) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *disco
 	if err != nil {
 		return "", "", make([]byte, 0), err
 	}
+	err = mw.AutoOrientImage()
+	if err != nil {
+		return "", "", make([]byte, 0), err
+	}
 	width := mw.GetImageWidth()
 	height := mw.GetImageHeight()
 	mw1 := mw.Clone()

@@ -60,6 +60,10 @@ func (h *DeepFry) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *di
 	if err != nil {
 		return "", "", make([]byte, 0), err
 	}
+	err = mw.AutoOrientImage()
+	if err != nil {
+		return "", "", make([]byte, 0), err
+	}
 	err = mw.SharpenImage(0.0, 10.0)
 	if err != nil {
 		return "", "", make([]byte, 0), err
