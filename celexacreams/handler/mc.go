@@ -30,7 +30,7 @@ func (h *Mc) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *discord
 		return "", "", make([]byte, 0), &celexacreams.MissingArgsError{Message: args[0]}
 	}
 	var u string
-	if m.Mentions != nil {
+	if len(m.Mentions) > 0 {
 		u = m.Mentions[0].Username
 	} else {
 		u = m.Author.Username

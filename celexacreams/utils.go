@@ -88,8 +88,8 @@ func RemoveString(s []string, v string) []string {
 }
 
 func FindString(s []string, v string) int {
-	for i, v := range s {
-		if v == v {
+	for i, k := range s {
+		if k == v {
 			return i
 		}
 	}
