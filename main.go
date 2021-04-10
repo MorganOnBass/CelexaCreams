@@ -39,6 +39,7 @@ var (
 		"aesthetic":   &handler.Aesthetic{D: true},   // Take some text and make it ａ ｅ ｓ ｔ ｈ ｅ ｔ ｉ ｃ
 		"aesthetics":  &handler.Aesthetic{D: true},   // An alias because people keep trying to invoke it like this
 		"jpeg":        &handler.Jpeg{R: true},        // Adds more jpeg
+		"mc":          &handler.Mc{D: true},          // Builds a minecraft achievement
 	}
 )
 

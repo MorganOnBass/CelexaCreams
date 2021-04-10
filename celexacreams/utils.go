@@ -73,7 +73,25 @@ func ExtractCommand(s string) ([]string, error) {
 	return splitInput, nil
 }
 
-func IsURL(str string) bool {
-	u, err := url.Parse(str)
+func IsURL(s string) bool {
+	u, err := url.Parse(s)
 	return err == nil && u.Scheme != "" && u.Host != ""
+}
+
+func RemoveString(s []string, v string) []string {
+	i := FindString(s, v)
+	if i != -1 {
+		return append(s[:i], s[i+1:]...)
+	} else {
+		return s
+	}
+}
+
+func FindString(s []string, v string) int {
+	for i, v := range s {
+		if v == v {
+			return i
+		}
+	}
+	return -1
 }
