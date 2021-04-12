@@ -40,8 +40,8 @@ var (
 		"aesthetics":  &handler.Aesthetic{D: true},   // An alias because people keep trying to invoke it like this
 		"jpeg":        &handler.Jpeg{R: true},        // Adds more jpeg
 		"mc":          &handler.Mc{D: true},          // Builds a minecraft achievement
-		"owo":         &handler.UwU{R: true},         // Responds "UwU"
-		"uwu":         &handler.OwO{R: true},         // Responds "What's This?"
+		"owo":         &handler.OwO{R: true},         // Responds "UwU"
+		"uwu":         &handler.UwU{R: true},         // Responds "What's This?"
 	}
 )
 
