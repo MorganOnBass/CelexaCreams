@@ -41,6 +41,8 @@ var (
 		"jpeg":        &handler.Jpeg{R: true},        // Adds more jpeg
 		"mc":          &handler.Mc{D: true},          // Builds a minecraft achievement
 		"spin":        &handler.Spin{R: true},        // Crops to a circle and returns a spinning gif
+		"owo":         &handler.OwO{R: true},         // Responds "UwU"
+		"uwu":         &handler.UwU{R: true},         // Responds "What's This?"
 	}
 )
 
