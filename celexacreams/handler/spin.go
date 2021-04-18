@@ -107,8 +107,6 @@ func (h *Spin) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *disco
 		Image: images,
 		Delay: delays,
 	})
-	//gif, _ := gif.DecodeAll(buf)
-	//fmt.Println(gif)
 	if err != nil {
 		return "", "", make([]byte, 0), err
 	}
@@ -117,5 +115,4 @@ func (h *Spin) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *disco
 	fTime := time.Now()
 	eTime := fTime.Sub(sTime)
 	return "Image processed in " + fmt.Sprint(eTime), "test.gif", output, nil
-
 }
