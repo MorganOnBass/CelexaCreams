@@ -40,6 +40,7 @@ var (
 		"aesthetics":  &handler.Aesthetic{D: true},   // An alias because people keep trying to invoke it like this
 		"jpeg":        &handler.Jpeg{R: true},        // Adds more jpeg
 		"mc":          &handler.Mc{D: true},          // Builds a minecraft achievement
+		"spin":        &handler.Spin{R: true},        // Crops to a circle and returns a spinning gif
 	}
 )
 

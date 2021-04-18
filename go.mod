@@ -3,6 +3,7 @@ module github.com/morganonbass/celexacreams
 go 1.16
 
 require (
+	git.qianqiusoft.com/library/graphics-go v1.0.1
 	github.com/bwmarrin/discordgo v0.23.2
 	github.com/disintegration/imaging v1.6.2
 	github.com/prometheus/client_golang v1.10.0
