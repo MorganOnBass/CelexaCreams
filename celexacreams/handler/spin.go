@@ -59,17 +59,17 @@ func (h *Spin) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *disco
 		return "", "", make([]byte, 0), err
 	}
 	// cut input down to a sane size so this doesn't take all day and make a huge gif
-	dstImage := imaging.Fit(i, 800, 800, imaging.Lanczos)
-	centre := []int{dstImage.Rect.Max.X / 2, dstImage.Rect.Max.Y / 2}
+	resized := imaging.Fit(i, 800, 800, imaging.Lanczos)
+	centre := []int{resized.Rect.Max.X / 2, resized.Rect.Max.Y / 2}
 	var images []*image.Paletted
 	var delays []int
 	for f := 0; f <= 35; f++ {
-		tmp := image.NewRGBA(dstImage.Bounds())
-		graphics.Rotate(tmp, dstImage, &graphics.RotateOptions{(math.Pi / 18.0) * float64(f)})
-		frame := image.NewPaletted(dstImage.Bounds(), celexacreams.Palette)
+		tmp := image.NewRGBA(resized.Bounds())
+		graphics.Rotate(tmp, resized, &graphics.RotateOptions{(math.Pi / 18.0) * float64(f)})
+		frame := image.NewPaletted(resized.Bounds(), celexacreams.Palette)
 		draw.DrawMask(frame, frame.Bounds(), tmp, image.Point{}, &celexacreams.Circle{
 			P: image.Point{X: centre[0], Y: centre[1]},
-			R: celexacreams.Min(dstImage.Rect.Max.X, dstImage.Rect.Max.Y) / 2,
+			R: celexacreams.Min(resized.Rect.Max.X, resized.Rect.Max.Y) / 2,
 		}, image.Point{}, draw.Over)
 		images = append(images, frame)
 		delays = append(delays, 0)
