@@ -11,6 +11,7 @@ import (
 	"image/draw"
 	"image/gif"
 	"math"
+	"strconv"
 	"time"
 )
 
@@ -31,6 +32,21 @@ func (h *Spin) DeleteInvocation() bool {
 
 // Handle resizes to a sane value for the guild, crops to a circle, and creates a spinning gif
 func (h *Spin) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (string, string, []byte, error) {
+	args, _ := celexacreams.ExtractCommand(m.Content)
+	var speed int
+	if len(args) > 1 {
+		arg, err := strconv.ParseInt(args[1], 10, 0)
+		if err != nil {
+			speed = 5 // probably got '.jpeg <url>'
+		}
+		speed = int(arg)
+	} else {
+		speed = 5
+	}
+	if speed < 1 || speed > 10 {
+		return "spin only accepts a speed between 1 and 10", "", make([]byte, 0), nil
+	}
+	delay := int(40 / float64(speed) - 2)
 	sTime := time.Now()
 	ref := discordgo.MessageReference{
 		MessageID: m.ID,
@@ -64,6 +80,7 @@ func (h *Spin) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *disco
 		return "", "", make([]byte, 0), err
 	}
 	var resized *image.NRGBA
+	// output gifs can get big, blowing past the upload limit of unboosted guilds
 	if guild.PremiumTier < 2 {
 		resized = imaging.Fit(i, 512, 512, imaging.Lanczos)
 	} else {
@@ -73,6 +90,7 @@ func (h *Spin) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *disco
 	palette := celexacreams.QuantizeImage(resized)
 	var images []*image.Paletted
 	var delays []int
+	// spin this tasty record
 	for f := 0; f <= 35; f++ {
 		tmp := image.NewRGBA(resized.Bounds())
 		graphics.Rotate(tmp, resized, &graphics.RotateOptions{(math.Pi / 18.0) * float64(f)})
@@ -82,13 +100,15 @@ func (h *Spin) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *disco
 			R: celexacreams.Min(resized.Rect.Max.X, resized.Rect.Max.Y) / 2,
 		}, image.Point{}, draw.Over)
 		images = append(images, frame)
-		delays = append(delays, 0)
+		delays = append(delays, delay)
 	}
 	buf := new(bytes.Buffer)
 	err = gif.EncodeAll(buf, &gif.GIF{
 		Image: images,
 		Delay: delays,
 	})
+	//gif, _ := gif.DecodeAll(buf)
+	//fmt.Println(gif)
 	if err != nil {
 		return "", "", make([]byte, 0), err
 	}
