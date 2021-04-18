@@ -20,11 +20,6 @@ func (h *Meow) DeleteInvocation() bool {
 }
 
 // Handle meows back
-func (h *Meow) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (
-	string,
-	string,
-	[]byte,
-	error,
-) {
+func (h *Meow) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (string, string, []byte, error) {
 	return "_meeeeow_", "", make([]byte, 0), nil
 }
