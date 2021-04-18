@@ -34,7 +34,7 @@ func (h *Magik) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *disc
 	if len(args) > 1 {
 		arg, err := strconv.ParseFloat(args[1], 64)
 		if err != nil {
-			sauce = float64(2.0) // probably got '.magik <URL>'
+			arg = float64(2.0) // probably got '.magik <URL>'
 		}
 		sauce = arg
 	} else {

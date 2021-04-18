@@ -33,7 +33,7 @@ func (h *Jpeg) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *disco
 	if len(args) > 1 {
 		arg, err := strconv.ParseInt(args[1], 10, 0)
 		if err != nil {
-			sauce = 10 // probably got '.jpeg <url>'
+			arg = 10 // probably got '.jpeg <url>'
 		}
 		sauce = int(arg)
 	} else {
