@@ -29,7 +29,7 @@ func (h *Spin) DeleteInvocation() bool {
 	return h.D
 }
 
-// Handle resizes to 256x256, crops to a circle, and creates a spinning gif
+// Handle resizes to a sane value for the guild, crops to a circle, and creates a spinning gif
 func (h *Spin) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (string, string, []byte, error) {
 	sTime := time.Now()
 	ref := discordgo.MessageReference{
@@ -59,7 +59,16 @@ func (h *Spin) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *disco
 		return "", "", make([]byte, 0), err
 	}
 	// cut input down to a sane size so this doesn't take all day and make a huge gif
-	resized := imaging.Fit(i, 800, 800, imaging.Lanczos)
+	guild, err := s.Guild(m.GuildID)
+	if err != nil {
+		return "", "", make([]byte, 0), err
+	}
+	var resized *image.NRGBA
+	if guild.PremiumTier < 2 {
+		resized = imaging.Fit(i, 512, 512, imaging.Lanczos)
+	} else {
+		resized = imaging.Fit(i, 800, 800, imaging.Lanczos)
+	}
 	centre := []int{resized.Rect.Max.X / 2, resized.Rect.Max.Y / 2}
 	palette := celexacreams.QuantizeImage(resized)
 	var images []*image.Paletted
