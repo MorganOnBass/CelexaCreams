@@ -37,7 +37,7 @@ func (h *Spin) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *disco
 	if len(args) > 1 {
 		arg, err := strconv.ParseInt(args[1], 10, 0)
 		if err != nil {
-			speed = 5 // probably got '.spin <url>'
+			arg = 5 // probably got '.spin <url>'
 		}
 		speed = int(arg)
 	} else {
