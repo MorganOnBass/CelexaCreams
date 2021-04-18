@@ -61,12 +61,13 @@ func (h *Spin) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *disco
 	// cut input down to a sane size so this doesn't take all day and make a huge gif
 	resized := imaging.Fit(i, 800, 800, imaging.Lanczos)
 	centre := []int{resized.Rect.Max.X / 2, resized.Rect.Max.Y / 2}
+	palette := celexacreams.QuantizeImage(resized)
 	var images []*image.Paletted
 	var delays []int
 	for f := 0; f <= 35; f++ {
 		tmp := image.NewRGBA(resized.Bounds())
 		graphics.Rotate(tmp, resized, &graphics.RotateOptions{(math.Pi / 18.0) * float64(f)})
-		frame := image.NewPaletted(resized.Bounds(), celexacreams.Palette)
+		frame := image.NewPaletted(resized.Bounds(), palette)
 		draw.DrawMask(frame, frame.Bounds(), tmp, image.Point{}, &celexacreams.Circle{
 			P: image.Point{X: centre[0], Y: centre[1]},
 			R: celexacreams.Min(resized.Rect.Max.X, resized.Rect.Max.Y) / 2,
