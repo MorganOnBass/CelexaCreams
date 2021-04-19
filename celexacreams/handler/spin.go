@@ -8,10 +8,12 @@ import (
 	"github.com/disintegration/imaging"
 	"github.com/morganonbass/celexacreams/celexacreams"
 	"image"
+	"image/color"
 	"image/draw"
 	"image/gif"
 	"math"
 	"strconv"
+	"sync"
 	"time"
 )
 
@@ -88,20 +90,15 @@ func (h *Spin) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *disco
 	}
 	centre := []int{resized.Rect.Max.X / 2, resized.Rect.Max.Y / 2}
 	palette := celexacreams.QuantizeImage(resized)
-	var images []*image.Paletted
-	var delays []int
+	images :=  make([]*image.Paletted, 36)
+	delays := make([]int, 36)
+	var wg sync.WaitGroup
 	// spin this tasty record
 	for f := 0; f <= 35; f++ {
-		tmp := image.NewRGBA(resized.Bounds())
-		graphics.Rotate(tmp, resized, &graphics.RotateOptions{(math.Pi / 18.0) * float64(f)})
-		frame := image.NewPaletted(resized.Bounds(), palette)
-		draw.DrawMask(frame, frame.Bounds(), tmp, image.Point{}, &celexacreams.Circle{
-			P: image.Point{X: centre[0], Y: centre[1]},
-			R: celexacreams.Min(resized.Rect.Max.X, resized.Rect.Max.Y) / 2,
-		}, image.Point{}, draw.Over)
-		images = append(images, frame)
-		delays = append(delays, delay)
+		wg.Add(1)
+		go drawFrame(&wg, resized, f, palette, centre, images, delays, delay)
 	}
+	wg.Wait()
 	buf := new(bytes.Buffer)
 	err = gif.EncodeAll(buf, &gif.GIF{
 		Image: images,
@@ -115,4 +112,17 @@ func (h *Spin) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *disco
 	fTime := time.Now()
 	eTime := fTime.Sub(sTime)
 	return "Image processed in " + fmt.Sprint(eTime), "test.gif", output, nil
+}
+
+func drawFrame(wg *sync.WaitGroup, resized *image.NRGBA, f int, palette color.Palette, centre []int, images []*image.Paletted, delays []int, delay int) {
+	defer wg.Done()
+	tmp := image.NewRGBA(resized.Bounds())
+	graphics.Rotate(tmp, resized, &graphics.RotateOptions{(math.Pi / 18.0) * float64(f)})
+	frame := image.NewPaletted(resized.Bounds(), palette)
+	draw.DrawMask(frame, frame.Bounds(), tmp, image.Point{}, &celexacreams.Circle{
+		P: image.Point{X: centre[0], Y: centre[1]},
+		R: celexacreams.Min(resized.Rect.Max.X, resized.Rect.Max.Y) / 2,
+	}, image.Point{}, draw.Over)
+	images[f] = frame
+	delays[f] = delay
 }
