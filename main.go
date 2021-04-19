@@ -40,9 +40,11 @@ var (
 		"aesthetics":  &handler.Aesthetic{D: true},   // An alias because people keep trying to invoke it like this
 		"jpeg":        &handler.Jpeg{R: true},        // Adds more jpeg
 		"mc":          &handler.Mc{D: true},          // Builds a minecraft achievement
-		"spin":        &handler.Spin{R: true},        // Crops to a circle and returns a spinning gif
+		"spin":        &handler.Spin{R: true},        // Crops to a circle and returns a spinning gif, with an optional argument to set spin speed
 		"owo":         &handler.OwO{R: true},         // Responds "UwU"
 		"uwu":         &handler.UwU{R: true},         // Responds "What's This?"
+		"commands":    &handler.Commands{R: true},    // Returns a list of commands
+		"help":        &handler.Help{R: true},		  // Get help for a particular command
 	}
 )
 
@@ -62,6 +64,7 @@ func main() {
 	}
 	Prefix = p
 	celexacreams.Prefix = Prefix
+	celexacreams.Commands = celexacreamsHandlers
 
 	token, ok := os.LookupEnv("DISCORD_TOKEN")
 	if !ok {

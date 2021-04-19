@@ -27,7 +27,19 @@ func (h *Magik) DeleteInvocation() bool {
 	return h.D
 }
 
-// Handle magiks an image
+// Help returns a brief help string
+func (h *Magik) Help(short bool) string {
+	if short {
+		return "Does magik on an image. Optional integer argument sets just how much magik to do"
+	} else {
+		return fmt.Sprintf("Usage: `%vmagik [integer]`\n\nYou may attach an image or link to an image to the invoking post," +
+			" or reply to a post containing an image. If you do not, magik will process the most recent image in the channel.",
+			celexacreams.Prefix)
+	}
+}
+
+
+// Handle does some magik mangling. An optional argument can make it even more magikal
 func (h *Magik) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (string, string, []byte, error) {
 	args, _ := celexacreams.ExtractCommand(m.Content)
 	var sauce float64

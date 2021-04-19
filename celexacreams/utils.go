@@ -8,6 +8,8 @@ import (
 
 var Prefix string
 
+var Commands map[string]Handler
+
 type CelexaError struct {
 	Message string
 }

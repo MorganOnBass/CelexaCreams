@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/morganonbass/celexacreams/celexacreams"
@@ -23,16 +24,26 @@ func (h *Gif) DeleteInvocation() bool {
 	return h.D
 }
 
+// Help returns a brief help string
+func (h *Gif) Help(short bool) string {
+	if short {
+		return "Returns the first giphy result for the supplied search term"
+	} else {
+		return fmt.Sprintf("Usage: `%vgif Jason Momoa`\n\nReturn: Probably a pretty hot gif", celexacreams.Prefix)
+	}
+}
+
+
 // Handle shows the first gif returned by the supplied search string
 func (h *Gif) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (string, string, []byte, error) {
 	command, err := celexacreams.ExtractCommand(m.ContentWithMentionsReplaced())
+	if err != nil {
+		return "", "", make([]byte, 0), err
+	}
 	if len(command) <= 1 {
 		return "You should supply a search string, what do you think I am, a mind reader " + m.Author.Mention() + "?", "", make([]byte, 0), nil
 	}
 	searchString := strings.Join(command[1:], " ")
-	if err != nil {
-		return "", "", make([]byte, 0), err
-	}
 	url, err := celexacreams.GetGIF(searchString, 0)
 	if err != nil {
 		return "", "", make([]byte, 0), &celexacreams.CelexaError{

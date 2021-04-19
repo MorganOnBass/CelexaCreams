@@ -32,7 +32,20 @@ func (h *Spin) DeleteInvocation() bool {
 	return h.D
 }
 
-// Handle resizes to a sane value for the guild, crops to a circle, and creates a spinning gif
+// Help returns a brief help string
+func (h *Spin) Help(short bool) string {
+	if short {
+		return "Crops a circle from the center of an image and returns a spinning gif. "
+	} else {
+		return fmt.Sprintf("Usage: `%vspin [1-10]`\n\nReturn: A spinning circle from the center of the supplied image. " +
+			"You may attach an image or link to an image to the invoking post, or reply to a post containing an image. " +
+			"If you do not, spin will process the most recent image in the channel.\n\n" +
+			"The optional argument sets the spin speed.", celexacreams.Prefix)
+	}
+}
+
+
+// Handle resizes to a sane value for the guild, crops to a circle, and returns a spinning gif
 func (h *Spin) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (string, string, []byte, error) {
 	args, _ := celexacreams.ExtractCommand(m.Content)
 	var speed int

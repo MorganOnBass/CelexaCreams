@@ -9,4 +9,5 @@ type Handler interface {
 	Handle(*discordgo.MessageCreate, *discordgo.Channel, *discordgo.Session) (string, string, []byte, error)
 	DeleteInvocation() bool
 	Reply() bool
+	Help(bool) string
 }

@@ -1,7 +1,9 @@
 package handler
 
 import (
+    "fmt"
     "github.com/bwmarrin/discordgo"
+    "github.com/morganonbass/celexacreams/celexacreams"
 )
 
 // OwO responds to "owo"
@@ -19,7 +21,17 @@ func (h *OwO) DeleteInvocation() bool {
     return h.D
 }
 
-// Handle response back
+// Help returns a brief help string
+func (h *OwO) Help(short bool) string {
+    if short {
+        return "UwU"
+    } else {
+        return fmt.Sprintf("Usage: `%vowo`\n\nReturn: UwU", celexacreams.Prefix)
+    }
+}
+
+
+// Handle response UwU
 func (h *OwO) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (
     string,
     string,

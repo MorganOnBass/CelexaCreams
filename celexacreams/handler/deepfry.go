@@ -24,6 +24,18 @@ func (h *DeepFry) DeleteInvocation() bool {
 	return h.D
 }
 
+// Help returns a brief help string
+func (h *DeepFry) Help(short bool) string {
+	if short {
+		return "Deep fries an image"
+	} else {
+		return fmt.Sprintf("Usage: `%vdeepfry`\n\nYou may attach an image or link to an image to the invoking post," +
+			" or reply to a post containing an image. If you do not, deepfry will process the most recent image in the channel.",
+			celexacreams.Prefix)
+	}
+}
+
+
 // Handle returns a deep fried image
 func (h *DeepFry) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (string, string, []byte, error) {
 	sTime := time.Now()

@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/bwmarrin/discordgo"
+	"github.com/morganonbass/celexacreams/celexacreams"
 )
 
 // Meow responds to "meow"
@@ -18,6 +20,18 @@ func (h *Meow) Reply() bool {
 func (h *Meow) DeleteInvocation() bool {
 	return h.D
 }
+
+// Help returns a brief help string
+func (h *Meow) Help(short bool) string {
+	if short {
+		return "A prototype"
+	} else {
+		return fmt.Sprintf("Usage: `%vmeow`\n\nI'm a lazy dev and this command serves as a starting point for " +
+			"implementing new commands so I don't have to write all the boilerplate every time. :woman_shrugging:",
+			celexacreams.Prefix)
+	}
+}
+
 
 // Handle meows back
 func (h *Meow) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (string, string, []byte, error) {

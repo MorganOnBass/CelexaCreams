@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"github.com/morganonbass/celexacreams/celexacreams"
 	"strings"
@@ -21,7 +22,16 @@ func (h *Aesthetic) DeleteInvocation() bool {
 	return h.D
 }
 
-// Handle returns text but ａ ｅ ｓ ｔ ｈ ｅ ｔ ｉ ｃ
+// Help returns a brief help string
+func (h *Aesthetic) Help(short bool) string {
+	if short {
+		return "ａ ｅ ｓ ｔ ｈ ｅ ｔ ｉ ｃ"
+	} else {
+		return fmt.Sprintf("Usage: `%vaesthetic aesthetic`\n\nReturn: ａ ｅ ｓ ｔ ｈ ｅ ｔ ｉ ｃ", celexacreams.Prefix)
+	}
+}
+
+// Handle returns the input text but ａ ｅ ｓ ｔ ｈ ｅ ｔ ｉ ｃ
 func (h *Aesthetic) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (
 	string,
 	string,

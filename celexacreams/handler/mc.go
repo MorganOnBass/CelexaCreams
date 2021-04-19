@@ -23,7 +23,19 @@ func (h *Mc) DeleteInvocation() bool {
 	return h.D
 }
 
-// Handle returns a minecraft achievement
+// Help returns a brief help string
+func (h *Mc) Help(short bool) string {
+	if short {
+		return "Generate a minecraft achievement"
+	} else {
+		return fmt.Sprintf("Usage: `%vmc [@mention] achievement`\n\nReturn: A minecraft achievement. If invoked " +
+			"with a mention, it will be awarded to the mentioned user, else to the invoker.",
+			celexacreams.Prefix)
+	}
+}
+
+
+// Handle returns a minecraft achievement with specified name to the caller to the user mentioned in the invoking message
 func (h *Mc) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (string, string, []byte, error, ) {
 	args, _ := celexacreams.ExtractCommand(m.ContentWithMentionsReplaced())
 	if len(args) < 2 {

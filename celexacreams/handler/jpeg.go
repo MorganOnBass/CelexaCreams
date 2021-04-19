@@ -26,7 +26,19 @@ func (h *Jpeg) DeleteInvocation() bool {
 	return h.D
 }
 
-// Handle returns an image with more jpeg
+// Help returns a brief help string
+func (h *Jpeg) Help(short bool) string {
+	if short {
+		return "Needs moar jpeg. Optional integer argument sets just how much jpeg to add"
+	} else {
+		return fmt.Sprintf("Usage: `%vjpeg [1-10]`\n\nYou may attach an image or link to an image to the invoking post," +
+			" or reply to a post containing an image. If you do not, jpeg will process the most recent image in the channel.",
+			celexacreams.Prefix)
+	}
+}
+
+
+// Handle returns an image with moar jpeg. An optional integer argument specifies just how much more jpeg to add
 func (h *Jpeg) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (string, string, []byte, error) {
 	args, _ := celexacreams.ExtractCommand(m.Content)
 	var sauce int

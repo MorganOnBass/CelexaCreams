@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/morganonbass/celexacreams/celexacreams"
@@ -22,6 +23,16 @@ func (h *GifRoulette) Reply() bool {
 func (h *GifRoulette) DeleteInvocation() bool {
 	return h.D
 }
+
+// Help returns a brief help string
+func (h *GifRoulette) Help(short bool) string {
+	if short {
+		return "Returns a random giphy result for the supplied search term"
+	} else {
+		return fmt.Sprintf("Usage: `%vgifroulette Jason Momoa`\n\nReturn: Probably a pretty hot gif", celexacreams.Prefix)
+	}
+}
+
 
 // Handle shows a random gif returned by the supplied search string
 func (h *GifRoulette) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (string, string, []byte, error) {

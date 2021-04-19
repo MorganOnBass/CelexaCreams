@@ -28,7 +28,19 @@ func (h *Hooh) DeleteInvocation() bool {
 	return h.D
 }
 
-// Handle returns an image mirrored about the Y axis
+// Help returns a brief help string
+func (h *Hooh) Help(short bool) string {
+	if short {
+		return "bisects an image along the X axis and mirrors the top half"
+	} else {
+		return fmt.Sprintf("Usage: `%vhooh`\n\nYou may attach an image or link to an image to the invoking post," +
+			" or reply to a post containing an image. If you do not, hooh will process the most recent image in the channel.",
+			celexacreams.Prefix)
+	}
+}
+
+
+// Handle bisects an image along the X axis and mirrors the top half
 func (h *Hooh) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *discordgo.Session) (string, string, []byte, error) {
 	sTime := time.Now()
 	URL, err := celexacreams.FindNearestImageURL(m, c, s)
