@@ -1,6 +1,9 @@
 package main
 
 import (
+	"context"
+	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/morganonbass/celexacreams/celexacreams/celexadb"
 	"net/http"
 	"os"
 	"os/signal"
@@ -66,6 +69,17 @@ func main() {
 	celexacreams.Prefix = Prefix
 	celexacreams.Commands = celexacreamsHandlers
 
+	dbpool, err := pgxpool.Connect(context.Background(), os.Getenv("DATABASE_URL"))
+	if err != nil {
+		log.Fatalf("Unable to connect to database: %v\n", err)
+	}
+	defer dbpool.Close()
+	celexadb.Dbpool = dbpool
+	err = celexadb.SanityCheck()
+	if err != nil {
+		log.Fatalf("Database error: %v\n", err)
+	}
+
 	token, ok := os.LookupEnv("DISCORD_TOKEN")
 	if !ok {
 		log.Fatal("DISCORD_TOKEN not set")
@@ -78,6 +92,9 @@ func main() {
 	}
 
 	discord.AddHandler(messageCreate)
+	discord.AddHandler(guildCreate)
+
+	discord.Identify.Intents = discordgo.IntentsAllWithoutPrivileged
 
 	err = discord.Open()
 	if err != nil {
@@ -102,6 +119,16 @@ func mentionsCelexaCreams(m *discordgo.MessageCreate, id string) bool {
 		}
 	}
 	return false
+}
+
+func guildCreate(s *discordgo.Session, g *discordgo.GuildCreate) {
+	err := celexadb.GuildCreate(s, g)
+	if err != nil {
+		log.WithFields(log.Fields{
+			"error": err.Error(),
+			"guild_id": g.Guild.ID,
+		}).Error("failed to process GuildCreate event")
+	}
 }
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
@@ -145,6 +172,12 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			log.WithFields(log.Fields{
 				"error": err.Error(),
 			}).Error("failed to send message")
+		}
+		err = celexadb.IncrementMessageCount(m.GuildID)
+		if err != nil {
+			log.WithFields(log.Fields{
+				"error": err.Error(),
+			}).Error("failed to increment message_count")
 		}
 		return
 	}
