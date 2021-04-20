@@ -6,6 +6,7 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"github.com/bwmarrin/discordgo"
 	"github.com/jackc/pgx/v4/pgxpool"
+	"strings"
 	"time"
 )
 
@@ -44,10 +45,11 @@ func GuildCreate(s *discordgo.Session, g *discordgo.GuildCreate) error {
 	if err != nil {
 		return err
 	}
+	name := strings.Replace(g.Name, "'", "", -1)
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 	builder := psql.Insert("guilds").Columns("id", "name", "join_date", "owner").
-		Values(g.ID, g.Name, t, g.OwnerID).
-		Suffix(fmt.Sprintf("on conflict (id) do update set name = '%s', owner = '%v'", g.Name, g.OwnerID))
+		Values(g.ID, name, t, g.OwnerID).
+		Suffix(fmt.Sprintf("on conflict (id) do update set name = '%s', owner = '%v'", name, g.OwnerID))
 	q, args, _ := builder.ToSql()
 	_, err = Dbpool.Exec(context.Background(), q, args...)
 	if err != nil {
