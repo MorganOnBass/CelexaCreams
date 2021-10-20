@@ -12,10 +12,18 @@ shopt -s expand_aliases
 
 TS="$(date +%s)"
 DOCKER_HUB_USER="morganonbass"
-TAG="$DOCKER_HUB_USER/celexacreams:$TS"
+TAGBASE="$DOCKER_HUB_USER/celexacreams:$TS"
 SCRIPT_PATH=$(readlink -f $0)
 PROJECT_ROOT=$(dirname $SCRIPT_PATH)/..
+ARCHES=("amd64" "arm64v8")
 
-docker build -t $TAG $PROJECT_ROOT
-docker tag $TAG $DOCKER_HUB_USER/celexacreams:latest
-echo "$TAG"
+docker manifest create $DOCKER_HUB_USER/celexacreams:latest
+for ARCH in ${ARCHES[@]}
+do
+  TAG=$TAGBASE-$ARCH
+  docker build -t $TAG $PROJECT_ROOT --build-arg ARCH=$ARCH
+  docker push $TAG
+  docker manifest create $DOCKER_HUB_USER/celexacreams:latest --amend $TAG
+  docker manifest annotate $DOCKER_HUB_USER/celexacreams:latest $TAG --arch $ARCH
+done
+docker manifest push $DOCKER_HUB_USER/celexacreams:latest
