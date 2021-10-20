@@ -3,10 +3,12 @@ package celexacreams
 import (
 	"fmt"
 	"github.com/soniakeys/quant/median"
+	"gopkg.in/gographics/imagick.v3/imagick"
 	"image"
 	"image/color"
 	"image/draw"
 	"io"
+	"math"
 	"net/http"
 	"strings"
 
@@ -166,4 +168,33 @@ func QuantizeImage(i image.Image) color.Palette {
 		palette = append(palette, c)
 	}
 	return palette
+}
+
+func DoMagik(i []byte, sauce float64) ([]byte, error) {
+	mw := imagick.NewMagickWand()
+	defer mw.Destroy()
+	err := mw.ReadImageBlob(i)
+	if err != nil {
+		return make([]byte, 0), err
+	}
+	err = mw.AutoOrientImage()
+	if err != nil {
+		return make([]byte, 0), err
+	}
+	width := mw.GetImageWidth()
+	height := mw.GetImageHeight()
+
+	err = mw.LiquidRescaleImage(uint(float64(width)*0.5), uint(float64(height)*0.5), math.Round(sauce*0.5), 0)
+	if err != nil {
+		return make([]byte, 0), err
+	}
+	err = mw.LiquidRescaleImage(uint(float64(width)*0.75), uint(float64(height)*0.75), math.Round(sauce), 0)
+	if err != nil {
+		return make([]byte, 0), err
+	}
+	err = mw.SetImageFormat("PNG")
+	if err != nil {
+		return make([]byte, 0), err
+	}
+	return mw.GetImageBlob(), nil
 }

@@ -2,14 +2,11 @@ package handler
 
 import (
 	"fmt"
-	"math"
 	"strconv"
 	"time"
 
-	"github.com/morganonbass/celexacreams/celexacreams"
-	"gopkg.in/gographics/imagick.v3/imagick"
-
 	"github.com/bwmarrin/discordgo"
+	"github.com/morganonbass/celexacreams/celexacreams"
 )
 
 // Magik responds to "magik"
@@ -88,32 +85,10 @@ func (h *Magik) Handle(m *discordgo.MessageCreate, c *discordgo.Channel, s *disc
 		return "", "", make([]byte, 0), err
 	}
 
-	mw := imagick.NewMagickWand()
-	defer mw.Destroy()
-	err = mw.ReadImageBlob(image)
+	output, err := celexacreams.DoMagik(image, sauce)
 	if err != nil {
 		return "", "", make([]byte, 0), err
 	}
-	err = mw.AutoOrientImage()
-	if err != nil {
-		return "", "", make([]byte, 0), err
-	}
-	width := mw.GetImageWidth()
-	height := mw.GetImageHeight()
-
-	err = mw.LiquidRescaleImage(uint(float64(width)*0.5), uint(float64(height)*0.5), math.Round(sauce*0.5), 0)
-	if err != nil {
-		return "", "", make([]byte, 0), err
-	}
-	err = mw.LiquidRescaleImage(uint(float64(width)*0.75), uint(float64(height)*0.75), math.Round(sauce), 0)
-	if err != nil {
-		return "", "", make([]byte, 0), err
-	}
-	err = mw.SetImageFormat("PNG")
-	if err != nil {
-		return "", "", make([]byte, 0), err
-	}
-	output := mw.GetImageBlob()
 	fTime := time.Now()
 	eTime := fTime.Sub(sTime)
 	return "Image processed in " + fmt.Sprint(eTime), "magik.png", output, nil
